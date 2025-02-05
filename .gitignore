@@ -1,5 +1,7 @@
 ## Non-VScode files
 data/
+*.egg-info/
+*.egg
 
 ## R project files
 # History files
