@@ -1,5 +1,6 @@
 ## Non-VScode files
 data/
+figures/
 *.egg-info/
 *.egg
 

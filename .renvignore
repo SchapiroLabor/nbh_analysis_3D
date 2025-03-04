@@ -3,6 +3,7 @@ requirements/
 \.ipynb$
 ^scripts/submodules/
 \.(zip|tar\.gz|exe|dll|so|pyc|o|bin)$
+figures/
 
 # VScode files
 ## Ignore Visual Studio temporary files, build results, and
