@@ -2,7 +2,7 @@
 	path = scripts/submodules/cellcharter_3D
 	url = https://github.com/gesavoigt/cellcharter_3D
 [submodule "scripts/submodules/directionalSEA/scimap"]
-	path = scripts/submodules/directionalSEA/scimap
+	path = scripts/submodules/COZI/scimap
 	url = https://github.com/chiarasch/scimap
 	branch = delaunay_nbh
 [submodule "scripts/submodules/alphashape_3d"]
