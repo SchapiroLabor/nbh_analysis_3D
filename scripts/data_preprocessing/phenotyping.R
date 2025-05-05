@@ -1,3 +1,8 @@
+#####
+# Used for both macrophages & plasma cells
+# Run lines for each phenotype as indicated
+#####
+
 ## Imports
 #renv::install("bioc::FlowSOM", lock=TRUE)
 library(dplyr)
@@ -14,10 +19,12 @@ infile <- "data/temp/Kuett_2022_reclustering_macrophages.csv"
 infile <- "data/temp/Kuett_2022_reclustering_plasmacells.csv"
 dat <- read.csv(infile)
 head(dat)
+
 # Separate intensity values from annotation data
 ann <- dat[ , c('id','phenograph')]
 expr <- dat[ , 3:dim(dat)[2]]
 rownames(expr) <- ann$id
+
 # Convert to flowframe
 metadata <- data.frame(name=dimnames(expr)[[2]],
                        desc=paste('column',dimnames(expr)[[2]],'from dataset'))
@@ -26,6 +33,7 @@ metadata$maxRange <- apply(expr,2,max)
 dat.ff <- new('flowFrame',
               exprs=as.matrix(expr),
               parameters=AnnotatedDataFrame(metadata))
+
 # Convert to FlowSOM object
 fsom <- ReadInput(dat.ff,
                   compensate=FALSE,
@@ -42,6 +50,7 @@ fsom <- BuildSOM(fsom,
                  xdim=7,
                  ydim=7)
 str(fsom$map) ## Inspect
+
 # Build minimal spanning tree
 fsom <- BuildMST(fsom)
 str(fsom$MST) ## Inspect
