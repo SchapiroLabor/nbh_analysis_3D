@@ -6,7 +6,7 @@ import glob
 
 def load_data_2D(
         path_centroids: str = "../../data/Kuett_2022/MainHer2BreastCancerModel/measured_mask_centroids_2D/measured_mask_centroids_2D_*.csv",
-        path_phenotype: str = '../../data/Kuett_2022/MainHer2BreastCancerModel/model201710_cluster_labels_phenograph_recoded.csv',
+        path_phenotype: str = '../../data/phenotyping_final_labels.csv',
         centroids_to: str = 'obs'
 ) -> ad.AnnData:
     """
@@ -23,14 +23,15 @@ def load_data_2D(
     phenotypes = pd.read_csv(path_phenotype, dtype={'id':int, 'phenograph':'category', 'ct_broad':'category'})
 
     # Centroids
-    files = np.array(glob.glob(path_centroids)) ## unsorted list of files (full path)
+    files = np.array(glob.glob(path_centroids)) # unsorted list of files (full path)
     assert files.size > 0, 'No files with centroids found'
     dtype_dict = {'id':int, 'x':float, 'y':float, 'z':int}
     centroids = pd.concat([pd.read_csv(file, dtype=dtype_dict) for file in files])
     centroids.sort_values(by='z', inplace=True)
     centroids['z'] = centroids['z'].astype('category')
     
-    data = pd.merge(centroids, phenotypes, on='id') ## id = cell id, z = imageid
+    data = pd.merge(centroids, phenotypes, on='id') # id = cell id, z = imageid
+    # TODO convert index to str or suppress warning
     if centroids_to == 'obs':
         adata = ad.AnnData(obs=data)
     elif centroids_to == 'obsm':
@@ -44,7 +45,7 @@ def load_data_2D(
 
 def load_data_3D_full(
         path_centroids: str = "../../data/Kuett_2022/MainHer2BreastCancerModel/measured_mask_centroids_3D.csv",
-        path_phenotype: str = '../../data/Kuett_2022/MainHer2BreastCancerModel/model201710_cluster_labels_phenograph_recoded.csv',
+        path_phenotype: str = '../../data/phenotyping_final_labels.csv',
         centroids_to: str = 'obs'
 ) -> ad.AnnData:
     """
@@ -64,8 +65,9 @@ def load_data_3D_full(
     assert Path(path_centroids).exists(), 'Path to centroids does not exist'
     centroids = pd.read_csv(path_centroids)
 
-    data = pd.merge(centroids, phenotypes, on='id') ## id = cell id
-    data['imageid'] = np.repeat('imageid', data.shape[0]) ## placeholder
+    data = pd.merge(centroids, phenotypes, on='id') # id = cell id
+    data['imageid'] = np.repeat('imageid', data.shape[0]) # placeholder
+    # TODO convert index to str or suppress warning
     if centroids_to == 'obs':
         adata = ad.AnnData(obs=data)
     elif centroids_to == 'obsm':
@@ -78,10 +80,10 @@ def load_data_3D_full(
     return adata
 
 def load_data_3D_min(
-        path_centroids: str = "../../data/temp/measured_mask_centroids/stacks/centroids_stack_*.csv",
-        path_phenotype: str = '../../data/Kuett_2022/MainHer2BreastCancerModel/model201710_cluster_labels_phenograph_recoded.csv',
+        path_centroids: str | None = None,
+        path_phenotype: str = '../../data/phenotyping_final_labels.csv',
+        radius: int = 20, # in um; ignored if path_centroids is given
         sections: np.ndarray = np.arange(10,152,10),
-        centroids_to: str = 'obs'
 ) -> ad.AnnData:
     """
     Load AnnData object with minimal 3D data: centroids and phenotypes.
@@ -96,6 +98,8 @@ def load_data_3D_min(
         centroid position in μm ('x','y','z') are stored in obs or obsm['spatial], depending on 'centroids_to'
     """
     assert Path(path_phenotype).exists(), 'Path to phenotypes does not exist'
+    if path_centroids is None:
+        path_centroids = f"../../data/temp/measured_mask_centroids/stacks/radius{radius}um/centroids_stack_*.csv"
     assert np.array(glob.glob(path_centroids)).size > 0, 'No files with centroids found'
 
     # Phenotypes
@@ -113,14 +117,6 @@ def load_data_3D_min(
     centroids['section'] = centroids['section'].astype('category')
     centroids['id'] = centroids['id'].astype(int)  
     
-    data = pd.merge(centroids, phenotypes, on='id') ## id = cell id, section = imageid
-    if centroids_to == 'obs':
-        adata = ad.AnnData(obs=data)
-    elif centroids_to == 'obsm':
-        adata = ad.AnnData(
-            obs=data.drop(columns=['x','y','z']),
-            obsm={'spatial': data[['x','y','z']].values})
-    else:
-        raise NotImplementedError('centroids_to must be "obs" or "obsm"')
+    data = pd.merge(centroids, phenotypes, on='id') # id = cell id, section = imageid
 
-    return adata
+    return ad.AnnData(obs=data) # TODO convert index to str or suppress warning
