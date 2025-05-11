@@ -1,5 +1,6 @@
 ## Non-VScode files
-data/
+data/Kuett_2022/
+data/temp/
 figures/
 *.egg-info/
 *.egg
