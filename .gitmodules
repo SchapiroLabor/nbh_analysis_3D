@@ -1,0 +1,10 @@
+[submodule "scripts/submodules/cellcharter_3D"]
+	path = scripts/submodules/cellcharter_3D
+	url = https://github.com/gesavoigt/cellcharter_3D
+[submodule "scripts/submodules/alphashape_3d"]
+	path = scripts/submodules/alphashape_3d
+	url = https://github.com/gesavoigt/alphashape_3d
+[submodule "COZI"]
+	path = scripts/submodules/COZI
+	url = https://github.com/gesavoigt/COZI
+	branch = score_scaling

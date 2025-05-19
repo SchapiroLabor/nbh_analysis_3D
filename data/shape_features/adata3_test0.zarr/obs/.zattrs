@@ -1,0 +1,11 @@
+{
+    "_index": "_index",
+    "column-order": [
+        "id",
+        "phenotype",
+        "sample",
+        "niche"
+    ],
+    "encoding-type": "dataframe",
+    "encoding-version": "0.2.0"
+}
